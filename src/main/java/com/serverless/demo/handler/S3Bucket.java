@@ -1,0 +1,66 @@
+package com.serverless.demo.handler;
+
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Random;
+
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
+import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.util.IOUtils;
+
+public class S3Bucket {
+	
+	final String BUCKET_NAME = "dyrk-app/photos";
+	
+	public String get(String ID) throws Exception {
+	       
+	        AmazonDynamoDB dynamoDb = AmazonDynamoDBClientBuilder.standard().build();
+	        AmazonS3 s3 = AmazonS3ClientBuilder.standard().build();
+	        
+
+	        S3Object outcome = s3.getObject(new GetObjectRequest(BUCKET_NAME, ID));
+	        
+	        
+        	String stringOut = IOUtils.toString(outcome.getObjectContent());
+			return stringOut;
+
+	}
+	
+	public String add(String imageString, String ID) throws Exception {
+	       
+		AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().withRegion(Regions.EU_WEST_2).build();
+
+        DynamoDB dynamoDB = new DynamoDB(client);
+        
+        AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_2).build();
+        
+	    byte[] imageBytes = imageString.getBytes(StandardCharsets.UTF_8);
+	    InputStream inputStream = new ByteArrayInputStream(imageBytes);
+	    
+	    System.out.println(imageString);
+	    
+        s3.putObject(new PutObjectRequest(BUCKET_NAME, ID, 
+        		inputStream, 
+        		new ObjectMetadata()));
+        
+	    
+        return ID;
+	        // TODO: implement your handler
+	}
+}

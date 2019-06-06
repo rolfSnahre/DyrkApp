@@ -21,10 +21,15 @@ public class Add implements RequestHandler<Map<String, Object>, Object>{
 		context.getLogger().log("Input: " + input +"\n");
 
 		Item item = new Item();
+		
+		if(!input.containsKey("ID")) {
+			Random r = new Random();
+			String id = ""+r.nextLong();
+			input.put("ID", id);
+			
+		}
         
-        Random r = new Random();
-        String id = ""+r.nextLong();
-        item.withPrimaryKey("ID", id);
+		input.put("sort", ""+DateTime.now()); 
         
         try {
         	Map map = add(item, input);
@@ -40,32 +45,31 @@ public class Add implements RequestHandler<Map<String, Object>, Object>{
         
 	}
 	
+	public final String PHOTO_PARAM = "photo";
+	
 	public Map add(Item item, Map<String,Object> input) throws Exception{
 		
 		Table table = DUtil.getTable();
 		
 		String parentID = (String) input.get("parentID");
 		   
-
-		
 		Get get = new Get();
 		//Will throw error if not in table
 		get.get(parentID);
 		
-        Set<String> keyset = new HashSet<String>(input.keySet());
-        keyset.remove("ID");
-        keyset.remove("imageString");
+		if(input.containsKey(PHOTO_PARAM) && input.get(PHOTO_PARAM) != null) {
+			addPhoto((String) input.get(PHOTO_PARAM), (String) input.get("ID"));
+		}
+
+		Set<String> keyset = new HashSet<String>(input.keySet());
+        keyset.remove(PHOTO_PARAM);
         
         
         for(String key : keyset) {
         	item.with(key, input.get(key));
         }
         
-        item.with("sort", ""+DateTime.now()); 
 
-        if(input.containsKey("imageString")) {
-        	item.with("imageID", addPhoto((String)input.get("imageString"), (String) input.get("ID")));
-        }
     	
     	table.putItem(item);
     	
@@ -75,11 +79,10 @@ public class Add implements RequestHandler<Map<String, Object>, Object>{
 	}
 	
 	
-	public String addPhoto(String imageString, String ID) throws Exception{
+	public void addPhoto(String photoString, String name) throws Exception{
 		S3Bucket s3 = new S3Bucket();
-		String photoID = s3.add(imageString, ID);
+		s3.add(photoString, "photos/"+name);
 		
-		return photoID;
 		
 	}
 

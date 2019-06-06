@@ -67,6 +67,16 @@ public class GetAll implements RequestHandler<Object, Object> {
         		maps.add(map);
         	}
         	
+        	S3Bucket s3 = new S3Bucket();
+        	for(Map m : maps) {
+        		try {
+        			String photo = s3.get("photos/"+ m.get("ID"));
+        			m.put("photo", photo);
+        		}catch(Exception e) {
+        			System.out.println("No photo: " + m.get("ID"));
+        		}
+        	}
+        	
         	return maps;
 
         }catch(Exception e) {

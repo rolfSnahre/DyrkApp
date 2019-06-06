@@ -32,9 +32,10 @@ public class Update implements RequestHandler<Map<String, Object>, Object>{
 	}
 	
 	public Map update(Map input) throws Exception {
-		Item item = new Item().withKeyComponent("ID", input.get("ID"));
 		
 		Add add = new Add();
+		
+		Item item = new Item();
 		
 		Map m = add.add(item, input);
     	

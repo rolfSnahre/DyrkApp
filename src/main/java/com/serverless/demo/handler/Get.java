@@ -22,12 +22,16 @@ public class Get implements RequestHandler<Object, Object> {
 		try {
 			
 			Map map = get(input);
-	    	map.put("sort", map.get("date"));
-	    	map.remove("date");
-
-	    	if(map.containsKey("imageID")) {
-	    		map.put("imageString", getImageString((String) map.get("imageID")));
-	       	}
+	    	map.put("date", map.get("sort"));
+	    	map.remove("sort");
+	    	
+	    	try{
+	    		map.put("photo", getImageString((String) map.get("ID")));
+	    		System.out.println("S3 success");
+	    	}catch(Exception e) {
+	    		System.out.println("S3 error");
+	    	}
+	    	
 	    	return map;
 	    	
 		} catch (Exception e) {
@@ -54,7 +58,7 @@ public class Get implements RequestHandler<Object, Object> {
     public String getImageString(String photoID) throws Exception {
     	
     	S3Bucket s3 = new S3Bucket();
-    	String imageString = s3.get(photoID);
+    	String imageString = s3.get("photos/"+photoID);
     	
     	return imageString;
     }

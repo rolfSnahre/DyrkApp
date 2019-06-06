@@ -26,41 +26,34 @@ import com.amazonaws.util.IOUtils;
 
 public class S3Bucket {
 	
-	final String BUCKET_NAME = "dyrk-app/photos";
+	final String BUCKET_NAME = "dyrk-app";
 	
-	public String get(String ID) throws Exception {
+	public String get(String path) throws Exception {
 	       
-	        AmazonDynamoDB dynamoDb = AmazonDynamoDBClientBuilder.standard().build();
-	        AmazonS3 s3 = AmazonS3ClientBuilder.standard().build();
-	        
+		AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().withRegion(Regions.EU_WEST_2).build();
+        DynamoDB dynamoDB = new DynamoDB(client);
+        AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_2).build();
 
-	        S3Object outcome = s3.getObject(new GetObjectRequest(BUCKET_NAME, ID));
-	        
-	        
-        	String stringOut = IOUtils.toString(outcome.getObjectContent());
-			return stringOut;
+        S3Object outcome = s3.getObject(new GetObjectRequest(BUCKET_NAME, path));
+    	String stringOut = IOUtils.toString(outcome.getObjectContent());
+		
+    	return stringOut;
 
 	}
 	
-	public String add(String imageString, String ID) throws Exception {
+	public String add(String photoString, String path) throws Exception {
 	       
 		AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().withRegion(Regions.EU_WEST_2).build();
-
         DynamoDB dynamoDB = new DynamoDB(client);
-        
         AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_2).build();
         
-	    byte[] imageBytes = imageString.getBytes(StandardCharsets.UTF_8);
-	    InputStream inputStream = new ByteArrayInputStream(imageBytes);
+	    byte[] inputBytes = photoString.getBytes(StandardCharsets.UTF_8);
+	    InputStream inputStream = new ByteArrayInputStream(inputBytes);
 	    
-	    System.out.println(imageString);
-	    
-        s3.putObject(new PutObjectRequest(BUCKET_NAME, ID, 
-        		inputStream, 
-        		new ObjectMetadata()));
+	    System.out.println("path: " +path);
         
-	    
-        return ID;
-	        // TODO: implement your handler
+	    s3.putObject(new PutObjectRequest(BUCKET_NAME, path, inputStream, new ObjectMetadata()));
+        
+        return path;
 	}
 }

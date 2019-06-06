@@ -19,18 +19,19 @@ public class AddObject implements RequestHandler<Map<String, Object>, Object>{
 	public Object handleRequest(Map<String, Object> input, Context context) {
 		context.getLogger().log("Input: " + input);
         
-        Random r = new Random();
-        String id = ""+r.nextLong();
-        
-        input.put("ID", id);
+        if(!input.containsKey("ID")) {
+        	Random r = new Random();
+        	String id = ""+r.nextLong();
+        	input.put("ID", id);
+        }
         
 
         
         try {
 			Map map = (Map) add(input);
 			
-			map.put("sort", input.get("name"));
-		    map.remove("name");
+			map.put("name", input.get("sort"));
+		    map.remove("sort");
 		    
 		    return map;
 		} catch (Exception e) {

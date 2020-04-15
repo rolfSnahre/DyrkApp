@@ -12,29 +12,37 @@ public class IncrementLikes implements RequestHandler<Object, Object>{
 	public Object handleRequest(Object input, Context context) {
 		//context.getLogger().log(input.toString());
 		
+		String ID;
+		
 		if(input instanceof String) {
-			Get get = new Get();
-			Object getResult;
-			try {
-				getResult = get.get((String)input);
-				input = getResult;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				return e.getMessage();
-			}
+			ID = (String) input;
+		}else {
+			Map inputMap = (Map<String, Object>) input;
+			ID = (String) inputMap.get("ID");
 		}
+			
+		
+		Get get = new Get();
+		Object oldObj;
+		try {
+			oldObj = get.get((String)input);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			return e.getMessage();
+		}
+	
 		
 		
-		Map<String, Object> inputMap = (Map<String, Object>) input;
+		Map<String, Object> serverMap = (Map<String, Object>) oldObj;
 		
-		BigDecimal likes = (BigDecimal) inputMap.get("likes");
+		BigDecimal likes = (BigDecimal) serverMap.get("likes");
 		likes = likes.add(new BigDecimal(1));
-		inputMap.put("likes", likes);
+		serverMap.put("likes", likes);
 		
 		Update update = new Update();
 		
 		try {
-			Map map = update.update(inputMap);
+			Map map = update.update(serverMap);
 			
 			map.put("date", map.get("sort"));
         	map.remove("sort");

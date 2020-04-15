@@ -1,4 +1,4 @@
-package com.serverless.demo.handler;
+package DyrkApp.element;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +15,8 @@ import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.serverless.demo.handler.DUtil;
+import com.serverless.demo.handler.S3Bucket;
 
 public class Delete implements RequestHandler<Object, Object>{
 
@@ -31,7 +33,6 @@ public class Delete implements RequestHandler<Object, Object>{
 		
 		Table table = DUtil.getTable();
 		
-		DeleteItemSpec spec = new DeleteItemSpec().withPrimaryKey("ID", ID);
 		
 		Get get = new Get();
 		
@@ -48,7 +49,16 @@ public class Delete implements RequestHandler<Object, Object>{
 			for(Map child : children) {
 				delete.handleRequest(child, context);
 			}
+			
+			DeleteItemSpec spec = new DeleteItemSpec().withPrimaryKey("ID", ID);
+			
 			table.deleteItem(spec);
+			S3Bucket s3 = new S3Bucket();
+			
+			try{
+				s3.remove("photos/" + ID);
+			}catch(Exception e) { }
+			
 			return input;
 		}catch(Exception e) {
 			return e.getMessage();

@@ -1,4 +1,4 @@
-package com.serverless.demo.handler;
+package DyrkApp.Object;
 
 import java.util.Map;
 
@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.serverless.demo.handler.DUtil;
 
 public class GetObject implements RequestHandler<Object, Object>{
 

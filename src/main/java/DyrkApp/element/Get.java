@@ -1,4 +1,4 @@
-package com.serverless.demo.handler;
+package DyrkApp.element;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +11,8 @@ import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.serverless.demo.handler.DUtil;
+import com.serverless.demo.handler.S3Bucket;
 
 public class Get implements RequestHandler<Object, Object> {
 
@@ -26,7 +28,7 @@ public class Get implements RequestHandler<Object, Object> {
 	    	map.remove("sort");
 	    	
 	    	try{
-	    		map.put("photo", getImageString((String) map.get("ID")));
+	    		map.put("photo", getPhoto((String) map.get("ID")));
 	    		System.out.println("S3 success");
 	    	}catch(Exception e) {
 	    		System.out.println("S3 error");
@@ -46,6 +48,8 @@ public class Get implements RequestHandler<Object, Object> {
         
     	Table table = DUtil.getTable();
         
+    	System.out.println("ID: "+  ID);
+    	
     	GetItemSpec spec = new GetItemSpec().withPrimaryKey("ID" , ID);
     	
     	Item outcome = table.getItem(spec);
@@ -55,12 +59,12 @@ public class Get implements RequestHandler<Object, Object> {
     }
     
     
-    public String getImageString(String photoID) throws Exception {
+    public String getPhoto(String ID) throws Exception {
     	
     	S3Bucket s3 = new S3Bucket();
-    	String imageString = s3.get("photos/"+photoID);
+    	String photoString = s3.get("photos/"+ID);
     	
-    	return imageString;
+    	return photoString;
     }
     
     public boolean inTable(Object input) {

@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Random;
+import java.util.Scanner;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
@@ -35,7 +36,10 @@ public class S3Bucket {
         AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_2).build();
 
         S3Object outcome = s3.getObject(new GetObjectRequest(BUCKET_NAME, path));
-    	String stringOut = IOUtils.toString(outcome.getObjectContent());
+        
+        Scanner scanner = new Scanner(outcome.getObjectContent(), StandardCharsets.UTF_8.toString());
+    	String stringOut = scanner.useDelimiter("\\A").next();
+    	//String stringOut = IOUtils.toString(outcome.getObjectContent());
 		
     	return stringOut;
 
@@ -50,10 +54,16 @@ public class S3Bucket {
 	    byte[] inputBytes = photoString.getBytes(StandardCharsets.UTF_8);
 	    InputStream inputStream = new ByteArrayInputStream(inputBytes);
 	    
-	    System.out.println("path: " +path);
-        
 	    s3.putObject(new PutObjectRequest(BUCKET_NAME, path, inputStream, new ObjectMetadata()));
         
         return path;
+	}
+	
+	public void remove(String path) throws Exception {
+		AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().withRegion(Regions.EU_WEST_2).build();
+        DynamoDB dynamoDB = new DynamoDB(client);
+        AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_2).build();
+        
+        s3.deleteObject(BUCKET_NAME, path);
 	}
 }

@@ -1,4 +1,4 @@
-package com.serverless.demo.handler;
+package DyrkApp.Object;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +13,7 @@ import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.serverless.demo.handler.DUtil;
 
 public class GetAllObjects implements RequestHandler<Object, Object>{
 

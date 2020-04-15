@@ -1,4 +1,4 @@
-package com.serverless.demo.handler;
+package DyrkApp.element;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -13,6 +13,8 @@ import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.serverless.demo.handler.DUtil;
+import com.serverless.demo.handler.S3Bucket;
 
 public class GetAll implements RequestHandler<Object, Object> {
 
@@ -20,7 +22,6 @@ public class GetAll implements RequestHandler<Object, Object> {
     public Object handleRequest(Object input, Context context) {
     	context.getLogger().log("Input: " + input);
     	
-
         String parentID;
         
         if (input instanceof Map) {
@@ -69,11 +70,11 @@ public class GetAll implements RequestHandler<Object, Object> {
         	
         	S3Bucket s3 = new S3Bucket();
         	for(Map m : maps) {
+        		String path = "photos/"+ m.get("ID");
         		try {
-        			String photo = s3.get("photos/"+ m.get("ID"));
+        			String photo = s3.get(path);
         			m.put("photo", photo);
         		}catch(Exception e) {
-        			System.out.println("No photo: " + m.get("ID"));
         		}
         	}
         	

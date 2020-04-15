@@ -1,4 +1,4 @@
-package com.serverless.demo.handler;
+package DyrkApp.element;
 
 import java.util.Map;
 
@@ -12,13 +12,18 @@ public class Update implements RequestHandler<Map<String, Object>, Object>{
 	public Object handleRequest(Map<String, Object> input, Context context) {
 		context.getLogger().log(input.toString());
 		
-		Get get = new Get();
 //		if(get.inTable(input)) {
 //			return "Object not in table";
 //		}
         
 		try {
+			
+			Get get = new Get();
 			get.get(input);
+			
+			input.put("sort",input.get("date"));
+			input.remove("date");
+			
 			Map map = update(input);
 			
 			map.put("date", map.get("sort"));
@@ -26,7 +31,8 @@ public class Update implements RequestHandler<Map<String, Object>, Object>{
         	
         	return map;
 		}catch(Exception e) {
-			return e.toString();
+			e.printStackTrace();
+			return "Internal error";
 		}
 		
 	}

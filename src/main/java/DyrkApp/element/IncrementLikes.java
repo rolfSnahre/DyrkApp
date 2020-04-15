@@ -1,4 +1,4 @@
-package com.serverless.demo.handler;
+package DyrkApp.element;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -11,21 +11,28 @@ public class IncrementLikes implements RequestHandler<Object, Object>{
 	@Override
 	public Object handleRequest(Object input, Context context) {
 		//context.getLogger().log(input.toString());
-		
+		String ID;
 		if(input instanceof String) {
-			Get get = new Get();
-			Object getResult;
-			try {
-				getResult = get.get((String)input);
-				input = getResult;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				return e.getMessage();
-			}
+			ID = (String) input;	
+		}else {
+			Map<String, Object> inputMap = (Map<String, Object>) input;
+			ID = (String) inputMap.get("ID");
 		}
 		
 		
-		Map<String, Object> inputMap = (Map<String, Object>) input;
+		Get get = new Get();
+		Object oldObj;
+		try {
+			oldObj = get.get((String) ID);
+		
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			return e.getMessage();
+		}
+		
+		
+		
+		Map<String, Object> inputMap = (Map<String, Object>) oldObj;
 		
 		BigDecimal likes = (BigDecimal) inputMap.get("likes");
 		likes = likes.add(new BigDecimal(1));

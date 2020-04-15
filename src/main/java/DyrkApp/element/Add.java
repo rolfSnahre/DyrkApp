@@ -1,4 +1,4 @@
-package com.serverless.demo.handler;
+package DyrkApp.element;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -6,12 +6,15 @@ import java.util.Random;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.serverless.demo.handler.DUtil;
+import com.serverless.demo.handler.S3Bucket;
 
 public class Add implements RequestHandler<Map<String, Object>, Object>{
 
@@ -29,7 +32,7 @@ public class Add implements RequestHandler<Map<String, Object>, Object>{
 			
 		}
         
-		input.put("sort", ""+DateTime.now()); 
+		input.put("sort", ""+DateTime.now(DateTimeZone.forOffsetHours(2))); 
         
         try {
         	Map map = add(item, input);
@@ -57,20 +60,17 @@ public class Add implements RequestHandler<Map<String, Object>, Object>{
 		//Will throw error if not in table
 		get.get(parentID);
 		
+		Set<String> keyset = new HashSet<String>(input.keySet());
+		
 		if(input.containsKey(PHOTO_PARAM) && input.get(PHOTO_PARAM) != null) {
 			addPhoto((String) input.get(PHOTO_PARAM), (String) input.get("ID"));
+			keyset.remove(PHOTO_PARAM);
 		}
-
-		Set<String> keyset = new HashSet<String>(input.keySet());
-        keyset.remove(PHOTO_PARAM);
-        
+		System.out.println(input);
         
         for(String key : keyset) {
         	item.with(key, input.get(key));
         }
-        
-
-    	
     	table.putItem(item);
     	
     	return item.asMap();

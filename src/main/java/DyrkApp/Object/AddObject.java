@@ -1,4 +1,4 @@
-package com.serverless.demo.handler;
+package DyrkApp.Object;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -12,6 +12,7 @@ import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.serverless.demo.handler.DUtil;
 
 public class AddObject implements RequestHandler<Map<String, Object>, Object>{
 

@@ -24,7 +24,7 @@ public class DeIncrementLikes implements RequestHandler<Object, Object>{
 		Get get = new Get();
 		Object oldObj;
 		try {
-			oldObj = get.get((String) ID);
+			oldObj = get.get(ID);
 		
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -32,7 +32,7 @@ public class DeIncrementLikes implements RequestHandler<Object, Object>{
 		}
 		
 		
-		Map<String, Object> inputMap = (Map<String, Object>) input;
+		Map<String, Object> inputMap = (Map<String, Object>) oldObj;
 		
 		BigDecimal likes = (BigDecimal) inputMap.get("likes");
 		likes = likes.subtract(new BigDecimal(1));

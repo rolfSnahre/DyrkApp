@@ -11,6 +11,7 @@ public class IncrementLikes implements RequestHandler<Object, Object>{
 	@Override
 	public Object handleRequest(Object input, Context context) {
 		//context.getLogger().log(input.toString());
+		
 		String ID;
 		if(input instanceof String) {
 			ID = (String) input;	
@@ -23,7 +24,7 @@ public class IncrementLikes implements RequestHandler<Object, Object>{
 		Get get = new Get();
 		Object oldObj;
 		try {
-			oldObj = get.get((String) ID);
+			oldObj = get.get(ID);
 		
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

@@ -40,12 +40,15 @@ public class Delete implements RequestHandler<Object, Object>{
 			return "item not in table";
 		}
 		
-		GetAll getAll = new GetAll();
-		List<Map> children = (List<Map>) getAll.handleRequest(input, context);
+		
 
 		Delete delete = new Delete();
 		
 		try {
+			
+			GetAll getAll = new GetAll();
+			List<Map> children = (List<Map>) getAll.getAll(ID);
+			
 			for(Map child : children) {
 				delete.handleRequest(child, context);
 			}

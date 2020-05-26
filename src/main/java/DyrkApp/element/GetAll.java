@@ -16,33 +16,35 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.serverless.demo.handler.DUtil;
 import com.serverless.demo.handler.S3Bucket;
 
-public class GetAll implements RequestHandler<Object, Object> {
+public class GetAll implements RequestHandler<Map, Object> {
 
     @Override
-    public Object handleRequest(Object input, Context context) {
+    public Object handleRequest(Map input, Context context) {
     	context.getLogger().log("Input: " + input);
     	
-        String parentID;
+    	Map post = (Map) input.get("post");
+    	List<String> BlockedUsers = (List<String>) input.get("blocedUsers");
+    	
+    	String parentID = (String) post.get("ID");
         
-        if (input instanceof Map) {
-        	parentID = (String) ((Map) input).get("ID");
-        }else {
-        	parentID = (String) input;
-        } 
+        try {
+        	List<Map> unfiltered = getAll(parentID);
+        	return filterBlocked(unfiltered, BlockedUsers); 
+        }catch(Exception e) {
+        	return e.getMessage();
+        }
         
-        
-        return getAll(parentID);
         
     }
     
-    public Object getAll(String parentID) {
+    public List<Map> getAll(String parentID) throws Exception{
     	
         Table table = DUtil.getTable();
         Index index = table.getIndex("GSI1");
         
     	Get get = new Get();
         if(!get.inTable(parentID)) {
-        	return "Error";
+        	throw new Exception("Not in table");
         }
         
         Map<String, Object> valueMap = new HashMap<String, Object>();
@@ -55,34 +57,42 @@ public class GetAll implements RequestHandler<Object, Object> {
 				.withScanIndexForward(false);
         		
         
-        try {
-        	ItemCollection<QueryOutcome> queryRet = index.query(spec);        	
-        	List<Map> maps = new ArrayList<Map>();
+    
+    	ItemCollection<QueryOutcome> queryRet = index.query(spec);        	
+    	List<Map> maps = new ArrayList<Map>();
+    	
+    	for(Item outcome : queryRet) {
+    		Map map = outcome.asMap();
         	
-        	for(Item outcome : queryRet) {
-        		Map map = outcome.asMap();
-            	
-        		map.put("date", map.get("sort"));
-            	map.remove("sort");
-            	
-        		maps.add(map);
-        	}
+    		map.put("date", map.get("sort"));
+        	map.remove("sort");
         	
-        	S3Bucket s3 = new S3Bucket();
-        	for(Map m : maps) {
-        		String path = "photos/"+ m.get("ID");
-        		try {
-        			String photo = s3.get(path);
-        			m.put("photo", photo);
-        		}catch(Exception e) {
-        		}
-        	}
-        	
-        	return maps;
+    		maps.add(map);
+    	}
+    	
+    	S3Bucket s3 = new S3Bucket();
+    	for(Map m : maps) {
+    		String path = "photos/"+ m.get("ID");
+    		try {
+    			String photo = s3.get(path);
+    			m.put("photo", photo);
+    		}catch(Exception e) {
+    		}
+    	}
+    	
+    	return maps;
 
-        }catch(Exception e) {
-        	return e.getMessage();
-        }
+       
+    }
+    
+    public List<Map> filterBlocked(List<Map> unfiltered, List<String> BlockedUsers) {
+    	List<Map> filtered_Maps = new ArrayList<Map>();
+    	for(Map<String, Object> map : unfiltered) {
+    		if(BlockedUsers.contains( map.get("deviceID") ) ) {
+    			filtered_Maps.add(map);
+    		}
+    	}
+    	return filtered_Maps;
     }
 
 }

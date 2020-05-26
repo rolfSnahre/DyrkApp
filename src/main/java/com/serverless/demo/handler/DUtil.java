@@ -10,7 +10,12 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.ItemCollection;
+import com.amazonaws.services.dynamodbv2.document.ScanOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.document.spec.ScanSpec;
+
+import DyrkApp.element.Delete;
+import DyrkApp.element.Get;
 
 public class DUtil {
 
@@ -22,6 +27,39 @@ public class DUtil {
         DynamoDB dynamoDB = new DynamoDB(client);
 
         return dynamoDB.getTable("Dyrk");
+	}
+	
+	public static Table getTableBlockedUsers() {
+		AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
+				.withRegion(Regions.EU_WEST_2)
+				.build();
+
+        DynamoDB dynamoDB = new DynamoDB(client);
+
+        return dynamoDB.getTable("BlockedUsers");
+	}
+	
+	public static List<Map> getAllWithDeviceID(String deviceID){
+		Table table = DUtil.getTable();
+		
+		ItemCollection<ScanOutcome> outcome = table.scan(new ScanSpec());
+		
+		List<Map<String, Object>> elements = DUtil.itemCollectToMapList(outcome);
+		
+		Get get = new Get();
+		Delete delete = new Delete();
+		
+		List<Map> elemsWithDevID = new ArrayList<Map>();
+		
+		for(Map<String, Object> elem : elements) {
+			String elemDevID = (String) elem.get("deviceID");
+			if(elemDevID == deviceID){
+				elemsWithDevID.add(elem);
+			}
+			
+		}
+		
+		return elemsWithDevID;
 	}
 	
 	public static DynamoDB getDynamoDB() {

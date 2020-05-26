@@ -21,7 +21,7 @@ public class Update implements RequestHandler<Map<String, Object>, Object>{
 			Get get = new Get();
 			get.get(input);
 			
-			input.put("sort",input.get("date"));
+			input.put("sort", input.get("date"));
 			input.remove("date");
 			
 			Map map = update(input);

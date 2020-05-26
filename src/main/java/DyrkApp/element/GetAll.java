@@ -30,7 +30,7 @@ public class GetAll implements RequestHandler<Map, Object> {
         	List<Map> unfiltered = getAll(parentID);
         	return filterBlocked(unfiltered, BlockedUsers); 
         }catch(Exception e) {
-        	return e.getMessage();
+        	return e;
         }
         
         
@@ -46,6 +46,7 @@ public class GetAll implements RequestHandler<Map, Object> {
         	throw new Exception("Not in table");
         }
         
+        
         Map<String, Object> valueMap = new HashMap<String, Object>();
         
         valueMap.put(":parentID", parentID);
@@ -55,9 +56,12 @@ public class GetAll implements RequestHandler<Map, Object> {
         			.withValueMap(valueMap)
 				.withScanIndexForward(false);
         		
-        
+       
     
     	ItemCollection<QueryOutcome> queryRet = index.query(spec);        	
+    	
+    	
+    	
     	List<Map> maps = new ArrayList<Map>();
     	
     	for(Item outcome : queryRet) {
@@ -68,6 +72,8 @@ public class GetAll implements RequestHandler<Map, Object> {
         	
     		maps.add(map);
     	}
+    	
+    	System.out.println(maps.toString());
     	
     	S3Bucket s3 = new S3Bucket();
     	for(Map m : maps) {
@@ -84,10 +90,10 @@ public class GetAll implements RequestHandler<Map, Object> {
        
     }
     
-    public List<Map> filterBlocked(List<Map> unfiltered, List<String> BlockedUsers) {
+    public List<Map> filterBlocked(List<Map> unfiltered, List<String> BlockedUsers) throws Exception {
     	List<Map> filtered_Maps = new ArrayList<Map>();
     	for(Map<String, Object> map : unfiltered) {
-    		if(BlockedUsers.contains( map.get("deviceID") ) ) {
+    		if(!map.containsKey("deviceID") || !BlockedUsers.contains( map.get("deviceID") ) ) {
     			filtered_Maps.add(map);
     		}
     	}

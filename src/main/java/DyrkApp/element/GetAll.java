@@ -22,10 +22,9 @@ public class GetAll implements RequestHandler<Map, Object> {
     public Object handleRequest(Map input, Context context) {
     	context.getLogger().log("Input: " + input);
     	
-    	Map post = (Map) input.get("post");
+    	String parentID = (String) input.get("ID");
     	List<String> BlockedUsers = (List<String>) input.get("blocedUsers");
     	
-    	String parentID = (String) post.get("ID");
         
         try {
         	List<Map> unfiltered = getAll(parentID);

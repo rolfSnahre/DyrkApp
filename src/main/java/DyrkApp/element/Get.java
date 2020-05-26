@@ -37,7 +37,6 @@ public class Get implements RequestHandler<Object, Object> {
 	    	return map;
 	    	
 		} catch (Exception e) {
-			e.printStackTrace();
 			return e.getMessage();
 		}
     }
@@ -47,8 +46,6 @@ public class Get implements RequestHandler<Object, Object> {
     	String ID = DUtil.inputToID(input);
         
     	Table table = DUtil.getTable();
-        
-    	System.out.println("ID: "+  ID);
     	
     	GetItemSpec spec = new GetItemSpec().withPrimaryKey("ID" , ID);
     	

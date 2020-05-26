@@ -24,6 +24,7 @@ public class IncrementLikes implements RequestHandler<Object, Object>{
 		Get get = new Get();
 		Object oldObj;
 		try {
+			context.getLogger().log("IDen er: " + ID);
 			oldObj = get.get(ID);
 		
 		} catch (Exception e) {

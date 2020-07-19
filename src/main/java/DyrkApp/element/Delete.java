@@ -59,7 +59,7 @@ public class Delete implements RequestHandler<Object, Object>{
 			S3Bucket s3 = new S3Bucket();
 			
 			try{
-				s3.remove("photos/" + ID);
+				s3.remove("photos/" + ID+".jpg");
 			}catch(Exception e) { }
 			
 			return input;

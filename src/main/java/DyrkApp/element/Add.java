@@ -81,7 +81,7 @@ public class Add implements RequestHandler<Map<String, Object>, Object>{
 	
 	public void addPhoto(String photoString, String name) throws Exception{
 		S3Bucket s3 = new S3Bucket();
-		s3.add(photoString, "photos/"+name);
+		s3.add(photoString, "photos2/"+name+".jpg");
 		
 		
 	}

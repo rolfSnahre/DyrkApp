@@ -46,14 +46,10 @@ public class DUtil {
 		
 		List<Map<String, Object>> elements = DUtil.itemCollectToMapList(outcome);
 		
-		Get get = new Get();
-		Delete delete = new Delete();
-		
 		List<Map> elemsWithDevID = new ArrayList<Map>();
-		
 		for(Map<String, Object> elem : elements) {
-			String elemDevID = (String) elem.get("deviceID");
-			if(elemDevID == deviceID){
+			
+			if(elem.containsKey("deviceID") && ((String) elem.get("deviceID")).equals(deviceID)){
 				elemsWithDevID.add(elem);
 			}
 			

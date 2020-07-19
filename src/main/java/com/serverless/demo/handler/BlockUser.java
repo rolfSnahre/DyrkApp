@@ -25,9 +25,9 @@ public class BlockUser implements RequestHandler<Map, Object>{
 		
 		putInBlocked(deviceID);
 		
-		deleteWithDeviceID(deviceID);
+		int numDel = deleteWithDeviceID(deviceID);
 		
-		return null;
+		return numDel+" post deleteted form user";
 		
 	}
 	
@@ -40,7 +40,7 @@ public class BlockUser implements RequestHandler<Map, Object>{
 		table.putItem(item);
 	}
 	
-	private void deleteWithDeviceID(String deviceID) {
+	private int deleteWithDeviceID(String deviceID) {
 		List<Map> elems = DUtil.getAllWithDeviceID(deviceID);
 		
 		Delete delete = new Delete();
@@ -48,6 +48,8 @@ public class BlockUser implements RequestHandler<Map, Object>{
 		for(Map elem : elems) {
 			delete.handleRequest(elem, null);
 		}
+		
+		return elems.size(); 
 	}
 
 }

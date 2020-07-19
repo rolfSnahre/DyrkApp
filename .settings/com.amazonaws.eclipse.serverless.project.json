@@ -1,1 +1,1 @@
-{"packagePrefix":"com.serverless.demo","lastDeploymentRegionId":null,"regionConfig":null}
+{"packagePrefix":"com.serverless.demo","lastDeploymentRegionId":"eu-west-2","regionConfig":{"eu-west-2":{"bucket":"dyrk-app","stack":"dyrkappbruker-20190523124205-authcognitoa2015a7c-1W5QQPLTB2QNN"}}}

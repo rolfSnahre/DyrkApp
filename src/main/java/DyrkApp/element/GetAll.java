@@ -23,7 +23,7 @@ public class GetAll implements RequestHandler<Map, Object> {
     	context.getLogger().log("Input: " + input);
     	
     	String parentID = (String) input.get("ID");
-    	List<String> BlockedUsers = (List<String>) input.get("blocedUsers");
+    	List<String> BlockedUsers = (List<String>) input.get("blockedUsers");
     	
         
         try {
@@ -90,10 +90,12 @@ public class GetAll implements RequestHandler<Map, Object> {
        
     }
     
-    public List<Map> filterBlocked(List<Map> unfiltered, List<String> BlockedUsers) throws Exception {
+    public List<Map> filterBlocked(List<Map> unfiltered, List<String> blockedUsers) throws Exception {
     	List<Map> filtered_Maps = new ArrayList<Map>();
     	for(Map<String, Object> map : unfiltered) {
-    		if(!map.containsKey("deviceID") || !BlockedUsers.contains( map.get("deviceID") ) ) {
+    		if( !map.containsKey("deviceID") ) {
+    			filtered_Maps.add(map);
+    		} else if (!blockedUsers.contains( map.get("deviceID")))  {
     			filtered_Maps.add(map);
     		}
     	}

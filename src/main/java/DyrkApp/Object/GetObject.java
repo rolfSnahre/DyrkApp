@@ -17,17 +17,17 @@ public class GetObject implements RequestHandler<Object, Object>{
 
         Table table = DUtil.getTable();
         
-        String parentID;
+        String ID;
         
 		if (input instanceof Map) {
-			parentID = (String) ((Map) input).get("ID");
+			ID = (String) ((Map) input).get("ID");
 		}else {
-			parentID = (String) input;
+			ID = (String) input;
 		}    	
     	
         
         try {
-        	GetItemSpec spec = new GetItemSpec().withPrimaryKey("ID" , parentID);
+        	GetItemSpec spec = new GetItemSpec().withPrimaryKey("ID" , ID);
         	
         	Item outcome = table.getItem(spec);
         	

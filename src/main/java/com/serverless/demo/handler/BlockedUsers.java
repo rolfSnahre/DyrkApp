@@ -11,7 +11,7 @@ import com.amazonaws.services.dynamodbv2.document.spec.ScanSpec;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
-public class IsBlocked implements RequestHandler<Map, Object>{
+public class BlockedUsers implements RequestHandler<Map, Object>{
 
 	@Override
 	public Object handleRequest(Map input, Context context) {
